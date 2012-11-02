@@ -27,18 +27,21 @@ public class MainActivity extends Activity {
     }
     
     public void login(View view) {
-    	try {        
-	    	Requests svc = new Requests();
-	    	EditText userTextField = (EditText)findViewById(R.id.userTextField);
-	        svc.execute("/GetPassword/?uid=" + userTextField.getText().toString());
-	        String data = svc.get();
-	        EditText passwordTextField = (EditText)findViewById(R.id.passwordTextField);
-	        if (data.compareTo(passwordTextField.getText().toString()) == 0) {
-		        Intent intent = new Intent(this, SubActivity.class);
-		        startActivity(intent);
-	        }
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
+    	Intent i = new Intent(this, SubActivity.class);
+        startActivity(i);
+        /*logincheck*/
+//    	try {        
+//	    	Requests svc = new Requests();
+//	    	EditText userTextField = (EditText)findViewById(R.id.userTextField);
+//	        svc.execute("/GetPassword/?uid=" + userTextField.getText().toString());
+//	        String data = svc.get();
+//	        EditText passwordTextField = (EditText)findViewById(R.id.passwordTextField);
+//	        if (data.compareTo(passwordTextField.getText().toString()) == 0) {
+//		        Intent intent = new Intent(this, SubActivity.class);
+//		        startActivity(intent);
+//	        }
+//    	} catch (Exception e) {
+//    		e.printStackTrace();
+//    	}
     }
 }
