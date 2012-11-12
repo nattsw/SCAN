@@ -7,18 +7,17 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.*;
 
 import android.os.AsyncTask;
 
-public class Requests extends AsyncTask<String, Void, String> {
-	private final static String SERVICE_URI = "http://invoicesafe.com/main0/Service1.svc/REST";
+public class Get extends AsyncTask<String, Void, String> {
+	private final static String SERVICE_URI = "http://scan.soelinmyat.com/api";
 
 	@Override
 	protected String doInBackground(String... urls) {
 		try {
 
-			// Send GET request to <service>/GetPlates
+			// Send GET request to <service>
 			HttpGet request = new HttpGet(SERVICE_URI + urls[0]);
 			
 			/*std*/
@@ -33,13 +32,16 @@ public class Requests extends AsyncTask<String, Void, String> {
 			InputStreamReader reader = new InputStreamReader(stream);
 			reader.read(buffer);
 			stream.close();
-			/*std*/
 			
+			String returnThis = new String (buffer);
+			return returnThis;
+			
+			/*std*/
 			//JSONObject for Objects
 			//JSONArray for Arrays of Objects
-			JSONArray plates = new JSONArray(new String(buffer));
+//			JSONArray plates = new JSONArray(new String(buffer));
 
-			return plates.toString();
+//			return plates.toString();
 			
 			/* for objects
 			JSONObject vehicle = new JSONObject(new String(buffer));

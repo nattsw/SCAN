@@ -1,11 +1,18 @@
 package nat.scan;
 
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import org.json.JSONObject;
 import android.os.Bundle;
+import android.os.Handler;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -22,26 +29,63 @@ public class MainActivity extends Activity {
     }
     
     public void register(View view) {
-    	Intent intent = new Intent(this, SubActivity.class);
+    	Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
     
     public void login(View view) {
-    	Intent i = new Intent(this, SubActivity.class);
-        startActivity(i);
         /*logincheck*/
-//    	try {        
-//	    	Requests svc = new Requests();
-//	    	EditText userTextField = (EditText)findViewById(R.id.userTextField);
-//	        svc.execute("/GetPassword/?uid=" + userTextField.getText().toString());
-//	        String data = svc.get();
-//	        EditText passwordTextField = (EditText)findViewById(R.id.passwordTextField);
-//	        if (data.compareTo(passwordTextField.getText().toString()) == 0) {
-//		        Intent intent = new Intent(this, SubActivity.class);
-//		        startActivity(intent);
-//	        }
-//    	} catch (Exception e) {
-//    		e.printStackTrace();
-//    	}
+    	try {
+    		/*setup HTTPGet*/
+	    	final Posts svc = new Posts();
+	    	EditText userTextField = (EditText)findViewById(R.id.userTextField);
+	    	String username = userTextField.getText().toString();
+	    	EditText passwordTextField = (EditText)findViewById(R.id.passwordTextField);
+	    	String password = passwordTextField.getText().toString();
+	        svc.execute("/login", username, password);
+	        System.out.println("/login " + username+ " " + password);
+	        /*retrieve results from HTTPGet*/
+	        Handler handler = new Handler();
+	        handler.postDelayed(new Runnable() {
+
+				public void run() {
+					// TODO Auto-generated method stub
+					svc.cancel(true);
+				}
+	        }, 10000 );
+	        ArrayList<String> result = svc.get(10000, TimeUnit.MILLISECONDS);
+	        
+	        if (result.get(0).equals("200")) { //code 200 means success
+				JSONObject reply1 = new JSONObject(result.get(1));
+				JSONObject userDetails = new JSONObject(reply1.getString("info"));
+				
+		        //create or retrieve the shared preference object
+				SharedPreferences mySharedPreferences = getSharedPreferences("scan", 1);				
+				//Retrieve an editor to modify the shared preference
+				SharedPreferences.Editor editor = mySharedPreferences.edit();	
+				//store new primitive types in the shared preferences object 
+				editor.putString("userID", userDetails.getString("id")); 
+				editor.putString("name", userDetails.getString("username")); 
+				editor.putString("isHelper", userDetails.getString("isHelper")); 
+				editor.putString("date_of_birth", userDetails.getString("dob"));
+				editor.commit();
+				
+				Intent intent = new Intent(this, SubActivity.class);
+				intent.putExtra("isSubscriber", userDetails.getString("isHelper"));
+		        startActivity(intent);
+				Toast.makeText(this, "Login Success", Toast.LENGTH_SHORT).show();
+	        }
+	        else
+	        	Toast.makeText(this, "Login Fail: Error " + result.get(0), Toast.LENGTH_SHORT).show();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		System.out.println("login catch: " + e.getMessage());
+    		Toast.makeText(this, "Check your internet connectivity.", Toast.LENGTH_LONG).show();
+    	}
     }
+
+	@Override
+	public void onBackPressed() {
+		
+	}
 }

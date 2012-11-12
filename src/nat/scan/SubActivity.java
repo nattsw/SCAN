@@ -6,35 +6,54 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class SubActivity extends Activity {
-
+	SettingsFragment sFrag;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
- 
+        sFrag = new SettingsFragment();
+        Bundle extras = getIntent().getExtras();
+        
         ActionBar actionBar = getActionBar();
  
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        
+        String label1 = getResources().getString(R.string.request_label);
+        Tab tab1 = actionBar.newTab();
+        tab1.setText(label1);
+        TabListener<RequestFragment> tl = new TabListener<RequestFragment>(this,
+                label1, RequestFragment.class);
+        tab1.setTabListener(tl);
+        actionBar.addTab(tab1);
  
-        String label1 = getResources().getString(R.string.label1);
-        Tab tab = actionBar.newTab();
-        tab.setText(label1);
-        TabListener<FeedsFragment> tl = new TabListener<FeedsFragment>(this,
-                label1, FeedsFragment.class);
-        tab.setTabListener(tl);
-        actionBar.addTab(tab);
- 
-        String label2 = getResources().getString(R.string.label2);
-        tab = actionBar.newTab();
-        tab.setText(label2);
-        TabListener<SettingsFragment> tl2 = new TabListener<SettingsFragment>(this,
-                label2, SettingsFragment.class);
-        tab.setTabListener(tl2);
-        actionBar.addTab(tab);
- 
+        if (extras != null && extras.getString("isSubscriber").equals("1")) {
+	        String label2 = getResources().getString(R.string.feeds_label);
+	        Tab tab2 = actionBar.newTab();
+	        tab2.setText(label2);
+	        TabListener<FeedsFragment> tl2 = new TabListener<FeedsFragment>(this,
+	        		label2, FeedsFragment.class);
+	        tab2.setTabListener(tl2);
+	        actionBar.addTab(tab2);
+        }
+        
+        String label3 = getResources().getString(R.string.settings_label);
+        Tab tab3 = actionBar.newTab();
+        tab3.setText(label3);
+        TabListener<SettingsFragment> tl3 = new TabListener<SettingsFragment>(this,
+                label3, SettingsFragment.class);
+        tab3.setTabListener(tl3);
+        actionBar.addTab(tab3); 
     }
  
+	@Override
+	public void onBackPressed() {
+		
+	}
+	
     private class TabListener<T extends Fragment> implements
             ActionBar.TabListener {
         private Fragment mFragment;
@@ -63,6 +82,11 @@ public class SubActivity extends Activity {
             if (mFragment == null) {
                 // If not, instantiate and add it to the activity
                 mFragment = Fragment.instantiate(mActivity, mClass.getName());
+                System.out.println("*******CLASSNAME: " + mClass.getName() + "********");
+                
+                if (mClass.getName().equals("nat.scan.SettingsFragment"))
+                	sFrag = (SettingsFragment) mFragment;
+                
                 ft.add(android.R.id.content, mFragment, mTag);
             } else {
                 // If it exists, simply attach it in order to show it
@@ -81,5 +105,9 @@ public class SubActivity extends Activity {
             // User selected the already selected tab. Usually do nothing.
         }
     }
-
+    
+    public void update_button_click(View view) {
+    	System.out.println("SubActivity button click");
+    	sFrag.update_button_click();
+    }
 }

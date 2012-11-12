@@ -2,19 +2,39 @@
 <resources>
 
     <string name="app_name">SCAN</string>
-    <string name="hello_world">Hello world!</string>
     <string name="user_text">Username</string>
     <string name="password_text">Password</string>
+    <string name="username_text">Preferred Username</string>
+    <string name="firstname_text">First Name</string>
+    <string name="lastname_text">Last Name</string>
+    <string name="birthdate_text">Birth Date</string>
+    <string name="subscribe_text">Subscribe to Requests?</string>
+    <string name="respond_text">respond!</string>
     <string name="login_button">Login</string>
     <string name="register_button">Register</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_sub">SubActivity</string>
-    <string name="label1">one</string>
-    <string name="label2">two</string>
-    <string name="body1"> body one</string>
+    <string name="title_activity_main">Login</string>
+    <string name="title_activity_sub">SCAN</string>
+    <string name="request_label">help!</string>
+    <string name="feeds_label">live feeds</string>
+    <string name="settings_label">settings</string>
     <string name="body2">body two</string>
     <string name="title_activity_feeds_fragment">FeedsFragment</string>
     <string name="title_activity_settings_fragment">SettingsFragment</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_request_fragment">RequestFragment</string>
+    <string name="help_button">HELP!</string>
+    <string name="Setting">Setting</string>
+    <string name="title_activity_cancel_request">CancelRequestActivity</string>
+    <string name="cancel">Cancel/Complete</string>
+    <string name="dateOfBirth">Date Of Birth</string>
+    <string name="checkbox">Receive help request alerts</string>
+    <string name="ok_button">OK</string>
+    <string name="welcome">Welcome!</string>
+    <string name="title_activity_splash">SCAN</string>
+    <string name="update_button">Update</string>
+    <string name="scan">Social Care Assistance Network</string>
 
 </resources>

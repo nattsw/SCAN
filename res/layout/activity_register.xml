@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent" 
@@ -11,7 +11,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="48dp"
-            android:text="@string/user_text"/>
+            android:text="@string/username_text" />
 
         <EditText
             android:id="@+id/NameInput"
@@ -21,13 +21,8 @@
             android:layout_below="@+id/textView1"
             android:ems="10"
             android:inputType="text"
-            android:singleLine="true"
-            android:clickable="false" 
-	        android:cursorVisible="false" 
-	        android:focusable="false" 
-	        android:focusableInTouchMode="false">
-            <!-- last 4 settings are to disable user control -->
-            
+        	android:singleLine="true" >
+
             <requestFocus />
         </EditText>
 
@@ -47,8 +42,8 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/textView2"
             android:ems="10"
-            android:inputType="textPassword" 
-            android:singleLine="true"/>
+            android:inputType="textPassword"
+            android:singleLine="true" />
 
         <TextView
             android:id="@+id/textView3"
@@ -56,8 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/PasswordInput"
             android:layout_marginTop="20dp"
-            android:text="@string/dateOfBirth" 
-            android:singleLine="true"/>
+            android:text="@string/dateOfBirth" />
 
         <EditText
             android:id="@+id/DateInput"
@@ -66,26 +60,28 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/textView3"
             android:ems="10"
-            android:inputType="date" />
+            android:inputType="date"
+            android:singleLine="true" />
 
         <CheckBox
-            android:id="@+id/update_checkbox"
+            android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/DateInput"
             android:layout_marginTop="20dp"
-            android:text="@string/checkbox"/>
+            android:text="@string/checkbox"
+	        android:onClick="onCheckboxClicked" />
 
         <Button
-            android:id="@+id/update_button"
+            android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/update_checkbox"
+            android:layout_below="@+id/checkbox"
             android:layout_marginLeft="31dp"
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@+id/textView3"
-            android:onClick="update_button_click"
-	    	android:text="@string/update_button" />
+            android:onClick="Register_button_click"
+	    	android:text="@string/register_button" />
 
     </RelativeLayout>

@@ -2,9 +2,26 @@
     package="nat.scan"
     android:versionCode="1"
     android:versionName="1.0" >
-    
-	<uses-permission android:name="android.permission.INTERNET" />
-	
+
+    <uses-permission android:name="my_app_package.permission.C2D_MESSAGE" />
+    <!-- App receives GCM messages. -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <!-- GCM connects to Google Services. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- GCM requires a Google account. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!-- Keeps the processor from sleeping when a message is received. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+ />
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="14" />
@@ -13,19 +30,26 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity 
-            android:name=".MainActivity" 
-            android:label="@string/title_activity_main">
+        <uses-library android:name="com.google.android.maps" />
+
+        <activity android:name=".SplashActivity" android:label="@string/title_activity_splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity><activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main" >
         </activity>
-        
-        <activity 
-            android:name=".SubActivity" 
-           	android:label="@string/title_activity_sub">
+        <activity android:name=".RegisterActivity" android:label="@string/title_activity_register">
+        </activity><activity
+            android:name=".SubActivity"
+            android:label="@string/title_activity_sub" >
+        </activity>
+        <activity
+            android:name=".RequestFragment"
+            android:label="@string/title_activity_request_fragment" >
         </activity>
         <activity
             android:name=".FeedsFragment"
@@ -35,6 +59,28 @@
             android:name=".SettingsFragment"
             android:label="@string/title_activity_settings_fragment" >
         </activity>
+        <activity android:name=".MapsActivity" >
+        </activity>
+        
+
+        <activity android:name=".CancelRequestActivity" android:label="@string/title_activity_cancel_request">
+        </activity>
+        
+        <service
+            android:name=".LocationService"
+            android:enabled="true" >
+        </service>
+
+        <receiver
+            android:name=".LocationReceiver"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="xxx.yyy.intent.action.LOCATION" />
+            </intent-filter>
+        </receiver>
+
+        
+        
     </application>
 
 </manifest>
