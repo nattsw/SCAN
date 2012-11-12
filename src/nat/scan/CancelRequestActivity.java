@@ -48,7 +48,7 @@ public class CancelRequestActivity extends Activity {
 		editor.putString("requested_help", "");
 		editor.commit();
     	
-		super.onBackPressed();
+		super.finish();
     }
 	
 	private void cancel_request(String username)

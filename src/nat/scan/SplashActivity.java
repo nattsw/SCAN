@@ -9,9 +9,6 @@ import android.os.Bundle;
 
 public class SplashActivity extends Activity {
 	private long splashDelay = 3000;
-	public static String TAG = "GCMIntentService";
-
-	String SENDER_ID = "215861736980";
 
 	private String getId() {
 		SharedPreferences settings = getSharedPreferences("scan", 1);

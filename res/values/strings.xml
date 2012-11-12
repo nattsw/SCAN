@@ -35,6 +35,7 @@
     <string name="welcome">Welcome!</string>
     <string name="title_activity_splash">SCAN</string>
     <string name="update_button">Update</string>
+    <string name="logout_button">Log Out</string>
     <string name="scan">Social Care Assistance Network</string>
 
 </resources>

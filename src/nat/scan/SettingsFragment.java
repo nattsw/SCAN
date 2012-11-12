@@ -136,6 +136,12 @@ public class SettingsFragment extends Fragment {
     	}    	
     }
     
+    public void logout_button_click() {
+    	savePreferences("", "", "", "");
+    	Toast.makeText(getActivity(), "Logged Out.", Toast.LENGTH_LONG).show();
+    	getActivity().finish();
+    }
+    
     protected void savePreferences(String inputName, String inputPassword, String inputDate, String isHelper){
     	
 		//create or retrieve the shared preference object

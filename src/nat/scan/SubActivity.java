@@ -107,7 +107,9 @@ public class SubActivity extends Activity {
     }
     
     public void update_button_click(View view) {
-    	System.out.println("SubActivity button click");
     	sFrag.update_button_click();
+    }
+    public void logout_button_click(View view) {
+    	sFrag.logout_button_click();
     }
 }

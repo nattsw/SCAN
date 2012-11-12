@@ -79,13 +79,14 @@ public final class R {
         public static final int help_button=0x7f040018;
         public static final int lastname_text=0x7f040005;
         public static final int login_button=0x7f040009;
+        public static final int logout_button=0x7f040022;
         public static final int menu_settings=0x7f04000b;
         public static final int ok_button=0x7f04001e;
         public static final int password_text=0x7f040002;
         public static final int register_button=0x7f04000a;
         public static final int request_label=0x7f04000e;
         public static final int respond_text=0x7f040008;
-        public static final int scan=0x7f040022;
+        public static final int scan=0x7f040023;
         public static final int settings_label=0x7f040010;
         public static final int subscribe_text=0x7f040007;
         public static final int title_activity_cancel_request=0x7f04001a;
