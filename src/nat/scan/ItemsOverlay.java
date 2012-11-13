@@ -62,6 +62,7 @@ public class ItemsOverlay extends ItemizedOverlay<OverlayItem> {
 	        dialog.setPositiveButton("Respond!", new DialogInterface.OnClickListener() {
 	            public void onClick(DialogInterface dialog, int id) {
 	                 //do things
+	            	
 	            }
 	        });
         }

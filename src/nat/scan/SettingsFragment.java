@@ -1,10 +1,8 @@
 package nat.scan;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -47,11 +45,6 @@ public class SettingsFragment extends Fragment {
     	EditText editText = (EditText)getView().findViewById(R.id.NameInput);
     	editText.setText(name);
     	
-    	// to get password that user input
-    	String password = settings.getString("password", "");
-    	EditText editPassword = (EditText)getView().findViewById(R.id.PasswordInput);
-    	editPassword.setText(password);
-    	
     	// to get date that user input
     	String date_of_birth = settings.getString("date_of_birth", "");
     	EditText editDate = (EditText) getView().findViewById(R.id.DateInput);
@@ -72,28 +65,16 @@ public class SettingsFragment extends Fragment {
   
     /** Called when the user clicks the Register button */
     public void update_button_click() {
-    	System.out.println("SettingsFragment button click");
-    	// to get name that user input
     	EditText editText = (EditText) getView().findViewById(R.id.NameInput);
     	String inputName = editText.getText().toString();
-    	System.out.println("1");
-    	// to get password that user input
     	EditText editPassword = (EditText) getView().findViewById(R.id.PasswordInput);
     	String inputPassword = editPassword.getText().toString();
-    	//System.out.println("inputPassword is "+ inputPassword);
-    	System.out.println("2");
-    	// to get date that user input
     	EditText editDate = (EditText) getView().findViewById(R.id.DateInput);
     	String inputDate = editDate.getText().toString();
-    	//System.out.println("inputDate is "+ inputDate);
-    	System.out.println("3");
     	if (inputName.equals(""))
     	{
     		Toast.makeText(getActivity(), "Unsuccessful:\nName field is empty.", Toast.LENGTH_LONG).show();
     	} else {
-    		
-    		Toast.makeText(getActivity(), "Your profile has been updated.", Toast.LENGTH_LONG).show();
-    		System.out.println("4");
 	    	update(inputName, inputPassword, inputDate);
     	}
         
@@ -101,7 +82,6 @@ public class SettingsFragment extends Fragment {
     
     private void update(String inputName, String inputPassword, String inputDate)
     {
-    	System.out.println("5");
     	final CheckBox checkBox = (CheckBox) getView().findViewById(R.id.update_checkbox);
     	boolean isHelper = checkBox.isChecked();
     	String temp;
@@ -111,33 +91,34 @@ public class SettingsFragment extends Fragment {
     	else {
     		temp = "0";
     	}
-    	System.out.println("6");
     	HttpClient httpclient = new DefaultHttpClient();   
     	HttpPost httppost = new HttpPost(SERVICE_URL); 
 
     	// data to send to server   
-    	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);   
+    	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);   
     	//nameValuePairs.add(new BasicNameValuePair("id", id));
     	nameValuePairs.add(new BasicNameValuePair("username", inputName));
     	nameValuePairs.add(new BasicNameValuePair("password", inputPassword));
-    	nameValuePairs.add(new BasicNameValuePair("dob", inputDate));
     	nameValuePairs.add(new BasicNameValuePair("isHelper", temp));
-    	System.out.println("7");
+    	System.out.println(inputName + " " + inputPassword + " " + temp);
     	try {
     		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-    		httpclient.execute(httppost);    		
-    		System.out.println("8");
+    		httpclient.execute(httppost);
     		//save data
     		savePreferences(inputName, inputPassword, inputDate, temp);
-
+    		Toast.makeText(getActivity(), "Your profile has been updated.", Toast.LENGTH_LONG).show();
     	} catch (Exception e) {
     		e.printStackTrace();
-    		System.out.println("9");
+    		Toast.makeText(getActivity(), "Failed to update profile.", Toast.LENGTH_LONG).show();
     	}    	
     }
     
     public void logout_button_click() {
-    	savePreferences("", "", "", "");
+    	SharedPreferences mySharedPreferences = getActivity().getSharedPreferences("scan", 1);
+    	mySharedPreferences.edit().clear();
+    	mySharedPreferences.edit().commit();
+    	
+    	
     	Toast.makeText(getActivity(), "Logged Out.", Toast.LENGTH_LONG).show();
     	getActivity().finish();
     }

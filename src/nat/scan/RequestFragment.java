@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -27,9 +26,15 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -40,12 +45,54 @@ public class RequestFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
- 
         return inflater.inflate(R.layout.fragment_request, container, false);
     }
-	
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		final TextView characterCount = (TextView)getView().findViewById(R.id.charactercount_textview);
+		final EditText detailsTextfield = (EditText) getView().findViewById( R.id.details_textfield );
+		final CheckBox addCheckbox = ( CheckBox ) getView().findViewById( R.id.additional_checkbox );
+		final TextWatcher textWatcher = new TextWatcher() {
+	        public void onTextChanged(CharSequence s, int start, int before, int count) {
+	        	characterCount.setText(String.valueOf(160-s.length())+" characters left");
+	        }
+
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		detailsTextfield.addTextChangedListener(textWatcher);
+		addCheckbox.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View arg0) {
+				if ( addCheckbox.isChecked()) {
+					characterCount.setVisibility(View.VISIBLE);
+					detailsTextfield.setVisibility(View.VISIBLE);
+		        } else {
+		        	characterCount.setVisibility(View.INVISIBLE);
+					detailsTextfield.setVisibility(View.INVISIBLE);
+		        }
+			}
+		});
+    }
+	public void onPause() {
+		super.onPause();
+		final TextView characterCount = (TextView)getView().findViewById(R.id.charactercount_textview);
+		final EditText detailsTextfield = (EditText) getView().findViewById( R.id.details_textfield );
+		final CheckBox addCheckbox = ( CheckBox ) getView().findViewById( R.id.additional_checkbox );
+		characterCount.setText("160 characters left");
+		detailsTextfield.setText("");
+		addCheckbox.setChecked(false);
+	}
 	  /** Called when the user clicks on help request button  */
-    public void help_button_click(View view) {
+    public void help_button_click() {
         
     	// to get GPS coordinates
     	LocationManager locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -83,30 +130,31 @@ public class RequestFragment extends Fragment {
     		longitude = -1.0;
     	}
     	
-//    	//sent lat,long,x,y,z to application server
     	SharedPreferences settings = getActivity().getSharedPreferences("scan", 1);
     	
     	String name = settings.getString("name", "");
-    	String requested_help = settings.getString("requested_help", "");
-    	
     	String lat = String.valueOf(latitude);
     	String lon = String.valueOf(longitude);
+    	String requested_help = settings.getString("requested_help", "");
+    	System.out.println(name + " " + lat + " " + lon + " rh:" + requested_help);
     	
-    	//System.out.println("lat is "+ lat);
-    	//System.out.println("lon is "+ lon);
-    	if (requested_help.equals("")){
-    		request_help(name, lat, lon);
-    		
-    		Toast.makeText(getActivity(), "Help request sent!", Toast.LENGTH_LONG).show();
-    	
-	    	//save requested state in the preference
-	    	SharedPreferences mySharedPreferences = getActivity().getSharedPreferences("scan", 1);
-	    	SharedPreferences.Editor editor = mySharedPreferences.edit();
-			editor.putString("requested_help", "1");
-			editor.commit();
+    	if (requested_help.equals("0")) {
+    		if (!request_help(name, lat, lon).equals(""))
+    		{
+	    		Toast.makeText(getActivity(), "Help request sent!", Toast.LENGTH_LONG).show();
 	    	
-	    	Intent intent = new Intent(getActivity(), CancelRequestActivity.class);
-	    	startActivity(intent);
+		    	//save requested state in the preference
+		    	SharedPreferences mySharedPreferences = getActivity().getSharedPreferences("scan", 1);
+		    	SharedPreferences.Editor editor = mySharedPreferences.edit();
+				editor.putString("requested_help", "1");
+				editor.commit();
+		    	
+		    	Intent intent = new Intent(getActivity(), CancelRequestActivity.class);
+		    	startActivity(intent);	
+    		}
+    		else {
+    			Toast.makeText(getActivity(), "Unable to request for help!", Toast.LENGTH_LONG).show();
+    		}
     	}
     	else{
     		Toast.makeText(getActivity(), "Help request has already been sent!", Toast.LENGTH_LONG).show();
@@ -117,55 +165,27 @@ public class RequestFragment extends Fragment {
     
     private String request_help(String username, String lat, String lon)
     {	
-    	HttpClient httpclient = new DefaultHttpClient();   
-    	HttpPost httppost = new HttpPost(SERVICE_URL); 
-    	
-    	// data to send to server   
-    	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
-    	nameValuePairs.add(new BasicNameValuePair("username", username));
-    	nameValuePairs.add(new BasicNameValuePair("longitude", lon));
-    	nameValuePairs.add(new BasicNameValuePair("latitude", lat));
-    	//nameValuePairs.add(new BasicNameValuePair("x", x));
-    	//nameValuePairs.add(new BasicNameValuePair("y", y));
-    	//nameValuePairs.add(new BasicNameValuePair("z", z));
-    	//nameValuePairs.add(new BasicNameValuePair("googleId", googleId));
-
-    	String id="";
+    	ArrayList<String> result = new ArrayList<String>();
     	
     	try {
-    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-    		HttpResponse response = httpclient.execute(httppost);
-    		
-    		HttpEntity entity = response.getEntity();
-    		
-    		BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent(), "UTF-8"));
-    		StringBuilder builder = new StringBuilder();
-    		
-    		for (String line = null; (line = reader.readLine()) != null;) {
-    		    builder.append(line).append("\n");
-    		}
-    		
-    		id = builder.toString();
-    			
-    		JSONTokener tokener = new JSONTokener(builder.toString());
-    		JSONObject finalResult = new JSONObject(tokener);
-
-    		id = finalResult.getString("request_id");
-    		System.out.println(id);
-    		
-
-    	} catch (ClientProtocolException e) {
-    		e.printStackTrace();
-    	} catch (IOException e) {
-    		//System.out.println("IO errors");
-    		e.printStackTrace();
-    	} catch (JSONException e) {
-    		//System.out.println("JSON error");
-    		// TODO Auto-generated catch block
+    		Posts getRequests = new Posts();
+        	getRequests.execute("/requestHelp", username, lat, lon);
+        	result = getRequests.get();
+        	
+        	System.out.println(result.get(0)); //statuscode
+        	System.out.println(result.get(1)); //entity
+//    		//save data
+        	if (result.get(0).equals("200")) {
+        		JSONObject reply = new JSONObject(result.get(1));
+        		System.out.println("id is " + reply.getString("request_id"));
+        		return reply.getString("request_id");
+        	}
+        	else {
+        		return "";
+        	}
+    	} catch (Exception e) {
     		e.printStackTrace();
     	}
-    	
-    	return id;
+    	return "";
     }
 }

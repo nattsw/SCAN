@@ -3,6 +3,7 @@ package nat.scan;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,66 +41,39 @@ public class RegisterActivity extends Activity{
     	setContentView(R.layout.activity_register);
 		
     }
-    
-    /** Called when the user clicks on checkbox  */
-    public void onCheckboxClicked(View view) {
-        // Is the view now checked?
-        		
-        final CheckBox checkBox = (CheckBox) findViewById(R.id.checkbox);
-        if (checkBox.isChecked()) {
-            checkBox.setChecked(true);
-        }   
-    }
   
     /** Called when the user clicks the Register button */
-    public void Register_button_click(View view) {
-    	
-        // Do something in response to button
-    	final Dialog dialog = new Dialog(RegisterActivity.this);
-    	dialog.setContentView(R.layout.dialog_view);
-    	
-    	// to get name that user input
-    	EditText editName = (EditText) findViewById(R.id.NameInput);
-    	String inputName = editName.getText().toString();
-    	System.out.println("inputName is "+ inputName);
-
-    	// to get password that user input
-    	EditText editPassword = (EditText) findViewById(R.id.PasswordInput);
-    	String inputPassword = editPassword.getText().toString();
-    	System.out.println("inputPassword is "+ inputPassword);
-    	
-    	// to get date that user input
-    	EditText editDate = (EditText) findViewById(R.id.DateInput);
-    	String inputDate = editDate.getText().toString();
-    	System.out.println("inputDate is "+ inputDate);
-
-    	if ((inputName.equals(""))|(inputPassword.equals("")) | (inputDate.equals("")) )
-    	{
-    		dialog.setTitle("Error"); 
-    		
-    		Toast.makeText(this, "Incomplete Particulars", Toast.LENGTH_SHORT).show();
-    	} else {
-    		
-    		dialog.setTitle("Success"); 
-    		
-	    	TextView text = (TextView)dialog.findViewById(R.id.dialogText); 
-	    	text.setText("Your registration is successful.");
-
-	    	String id = register(inputName, inputPassword, inputDate );
-	    	text.setText("Your registration is successful. " + id);
+    public void register_button_click(View view) {
+    	try{
+	    	EditText editName = (EditText) findViewById(R.id.username_textfield);
+	    	String inputName = editName.getText().toString();
+	
+	    	EditText editPassword = (EditText) findViewById(R.id.password_textfield);
+	    	String inputPassword = editPassword.getText().toString();
 	    	
-	    	dialog.show();			
+	    	EditText editDate = (EditText) findViewById(R.id.date_textfield);
+	    	String inputDate = editDate.getText().toString();
+	
+	    	CheckBox checkBox = (CheckBox) findViewById(R.id.subscriber_checkbox);
+	    	boolean isHelper = checkBox.isChecked();
+	    	
+	    	if ((inputName.equals(""))|(inputPassword.equals("")) | (inputDate.equals("")) )
+	    	{
+	    		Toast.makeText(this, "Incomplete Particulars", Toast.LENGTH_SHORT).show();
+	    	} else {
+	    		String result = register(inputName, inputPassword, inputDate, isHelper);
+		    	if (!result.equals("")) {
+		    		Toast.makeText(this, "Successful registration, " + inputName + "!", Toast.LENGTH_LONG).show();
+		    		super.onBackPressed();
+		    	}
+		    	else
+		    		Toast.makeText(this, "Your registration was unsuccessful. (Change username?)", Toast.LENGTH_LONG).show();
+	    	}
+    	} catch (Exception e)
+    	{
+    		System.out.println("registerbuttonclick exception: " + e.getMessage());
     	}
     }
-    
-    /*
-    private String getGoogleId()
-    {
-    	SharedPreferences settings = getSharedPreferences("scan", 0);
-
-		String id = settings.getString("googleId", "");
-		return id;
-    }*/
     
     protected void savePreferences(String inputName, String inputPassword, String inputDate, String isHelper){
 	
@@ -120,72 +94,34 @@ public class RegisterActivity extends Activity{
 
     }
 
-    private String register(String inputName, String inputPassword, String inputDate)
+    private String register(String inputName, String inputPassword, String inputDate, boolean isHelper)
     {
-    	final CheckBox checkBox = (CheckBox) findViewById(R.id.checkbox);
-    	boolean isHelper = checkBox.isChecked();
-    	String temp;
-    	if(isHelper) {
-    		temp = "1";
-    	}
-    	else {
-    		temp = "0";
-    	}
-    	
-    	HttpClient httpclient = new DefaultHttpClient();   
-    	HttpPost httppost = new HttpPost(SERVICE_URL); 
-
-    	//String googleId = getGoogleId();
-    	
-    	// data to send to server   
-    	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);   
-    	nameValuePairs.add(new BasicNameValuePair("username", inputName));
-    	nameValuePairs.add(new BasicNameValuePair("password", inputPassword));
-    	nameValuePairs.add(new BasicNameValuePair("dob", inputDate));
-    	nameValuePairs.add(new BasicNameValuePair("isHelper", temp));
-    	//nameValuePairs.add(new BasicNameValuePair("googleId", googleId));
-
-    	String id="";
+    	ArrayList<String> result = new ArrayList<String>();
+    
+    	String  isHelperString = (isHelper == true) ? "1" : "2";
     	
     	try {
-    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-    		HttpResponse response = httpclient.execute(httppost);
-    		
-    		HttpEntity entity = response.getEntity();
-    		
-    		BufferedReader reader = new BufferedReader(new InputStreamReader(entity.getContent(), "UTF-8"));
-    		StringBuilder builder = new StringBuilder();
-    		
-    		for (String line = null; (line = reader.readLine()) != null;) {
-    		    builder.append(line).append("\n");
-    		}
-    		
-    		id = builder.toString();
-    			
-    		JSONTokener tokener = new JSONTokener(builder.toString());
-    		JSONObject finalResult = new JSONObject(tokener);
-
-    		id = finalResult.getString("id");
-    		System.out.println(id);
-    		
-    		//save data
-    		savePreferences(inputName, inputPassword, inputDate, temp);
-
-    	} catch (ClientProtocolException e) {
-    		e.printStackTrace();
-    	} catch (IOException e) {
-    		//System.out.println("IO errors");
-    		e.printStackTrace();
-    	} catch (JSONException e) {
-    		//System.out.println("JSON error");
-    		// TODO Auto-generated catch block
-    		e.printStackTrace();
+    		Posts getRequests = new Posts();
+        	getRequests.execute("/register", inputName, inputPassword, inputDate, isHelperString);
+        	result = getRequests.get();
+        	
+        	System.out.println("/register: Status Code: " + result.get(0)); //statuscode
+        	System.out.println("/register: Entity : " + result.get(1)); //entity
+//    		//save data
+        	if (result.get(0).equals("200")) {
+//        		savePreferences(inputName, inputPassword, inputDate, isHelperString);
+        		JSONObject reply = new JSONObject(result.get(1));
+        		System.out.println("/register: userID is " + reply.getString("id"));
+        		return reply.getString("id");
+        	}
+        	else {
+        		return "";
+        	}
+    	} catch (Exception e) {
+    		System.out.println(e.getMessage());
     	}
-    	
-    	return id;
+    	return "";
     }
-    
 }
 
 

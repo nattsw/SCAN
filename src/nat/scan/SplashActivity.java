@@ -12,23 +12,8 @@ public class SplashActivity extends Activity {
 
 	private String getId() {
 		SharedPreferences settings = getSharedPreferences("scan", 1);
-
 		String id = settings.getString("id", "");
 		return id;
-	}
-
-	private void saveGoogleId(String id)
-	{
-		//create or retrieve the shared preference object
-		SharedPreferences mySharedPreferences = getSharedPreferences("scan", 1);
-
-		//Retrieve an editor to modify the shared preference
-		SharedPreferences.Editor editor = mySharedPreferences.edit();
-
-		//store new primitive types in the shared preferences object 
-		editor.putString("googleId", id);
-	
-		editor.commit();
 	}
 
 	@Override
@@ -41,10 +26,13 @@ public class SplashActivity extends Activity {
 			public void run(){
 		    	SharedPreferences settings = getSharedPreferences("scan", 1);
 				String requested_help = settings.getString("requested_help", "");
-				
+				System.out.println("Splash requested_help: " + requested_help);
 //				finish();
 				String id = getId();
 				if(id == "") {
+					SharedPreferences.Editor editor = settings.edit();
+					editor.putString("requested_help", "0");
+					editor.commit();
 					Intent mainIntent = new Intent().setClass(SplashActivity.this, MainActivity.class);
 					startActivity(mainIntent);
 				}

@@ -2,21 +2,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
-    
+    android:orientation="vertical" 
+     android:windowSoftInputMode="stateVisible|adjustResize">
+
     <Button
+        android:id="@+id/help_button"
         android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:layout_marginTop="20dp"
         android:onClick="help_button_click"
         android:text="@string/help_button" />
-    
-    <Button
-        android:layout_marginTop="20dp"
+
+    <CheckBox
+        android:id="@+id/additional_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/Setting"
-        android:onClick="setting_button_click" />
+        android:layout_below="@+id/help_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="@string/additional_checkbox"
+        android:checked="false"/>
+
+    <EditText
+        android:id="@+id/details_textfield"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="30dp"
+        android:layout_below="@+id/additional_checkbox"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:inputType="textMultiLine" 
+        android:gravity="top|left"
+        android:maxLength="160"
+        android:text=""
+        android:visibility="invisible"/>
+
+    <TextView
+        android:id="@+id/charactercount_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/help_button"
+        android:text="160 characters left"
+        android:layout_marginBottom="10dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="invisible"/>
+
 </RelativeLayout>

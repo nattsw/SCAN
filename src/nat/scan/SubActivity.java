@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 public class SubActivity extends Activity {
 	SettingsFragment sFrag;
+	RequestFragment rFrag;
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +49,6 @@ public class SubActivity extends Activity {
         tab3.setTabListener(tl3);
         actionBar.addTab(tab3); 
     }
- 
 	@Override
 	public void onBackPressed() {
 		
@@ -86,6 +86,8 @@ public class SubActivity extends Activity {
                 
                 if (mClass.getName().equals("nat.scan.SettingsFragment"))
                 	sFrag = (SettingsFragment) mFragment;
+                if (mClass.getName().equals("nat.scan.RequestFragment"))
+                	rFrag = (RequestFragment) mFragment;
                 
                 ft.add(android.R.id.content, mFragment, mTag);
             } else {
@@ -111,5 +113,9 @@ public class SubActivity extends Activity {
     }
     public void logout_button_click(View view) {
     	sFrag.logout_button_click();
+    }
+    
+    public void help_button_click(View view) {
+    	rFrag.help_button_click();
     }
 }

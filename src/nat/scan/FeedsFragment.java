@@ -28,6 +28,7 @@ public class FeedsFragment extends ListFragment {
 	ArrayList<String> time;
 	ArrayList<String> latitude;
 	ArrayList<String> longitude;
+	ArrayList<String> inProgress;
 	
 	String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
 	  "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
@@ -50,27 +51,30 @@ public class FeedsFragment extends ListFragment {
 	    	getRequests.execute("/getRequests", lat, lon);
 	    	ArrayList<String> result = getRequests.get();
 	    	
-	    	
-	    	
-	    	JSONObject reply1 = new JSONObject(result.get(1));
-	    	JSONArray requests = new JSONArray(reply1.getString("requests"));
-			
-	    	System.out.println("Result " + requests.toString());
-	    	username = new ArrayList<String>();
-	    	time = new ArrayList<String>();
-	    	latitude = new ArrayList<String>();
-	    	longitude = new ArrayList<String>();
-	    	Toast.makeText(getActivity(), Integer.toString(requests.length()) + " request(s)", Toast.LENGTH_SHORT).show();
-	    	for(int i=0;i<requests.length();i++)
-	    	{
-	    		JSONObject request = (JSONObject) requests.get(i);
-	    		reqID.add(request.get("id").toString());
-	    		username.add(request.get("requester_name").toString());
-	    		time.add(request.get("requested_time").toString());
-	    		latitude.add(request.get("latitude").toString());
-	    		longitude.add(request.get("longitude").toString());
-	    	}
-	    	
+		    	if (result.get(0).equals("200")) {
+			    	JSONObject reply1 = new JSONObject(result.get(1));
+			    	JSONArray requests = new JSONArray(reply1.getString("requests"));
+					
+			    	System.out.println("/getRequest: Result " + requests.toString());
+
+			    	reqID = new ArrayList<String>();
+			    	username = new ArrayList<String>();
+			    	time = new ArrayList<String>();
+			    	latitude = new ArrayList<String>();
+			    	longitude = new ArrayList<String>();
+			    	inProgress = new ArrayList<String>();
+			    	Toast.makeText(getActivity(), Integer.toString(requests.length()) + " request(s)", Toast.LENGTH_SHORT).show();
+			    	for(int i=0;i<requests.length();i++)
+			    	{
+			    		JSONObject request = (JSONObject) requests.get(i);
+			    		reqID.add(request.get("id").toString());
+			    		username.add(request.get("requester_name").toString());
+			    		time.add(request.get("requested_time").toString());
+			    		latitude.add(request.get("latitude").toString());
+			    		longitude.add(request.get("longitude").toString());
+			    		inProgress.add(request.get("in_progress").toString());
+			    	}
+		    	}
 	  		} catch (Exception e) {
 				e.printStackTrace();
 		}
@@ -78,8 +82,7 @@ public class FeedsFragment extends ListFragment {
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity() ,
 				  android.R.layout.simple_list_item_1, username);
 		setListAdapter(adapter);
-System.out.println("listadapterset");
-		debug ++;
+//		debug ++;
 //		Toast.makeText(getActivity(), "list created " + Integer.toString(debug) + " time(s)", Toast.LENGTH_SHORT).show();
     }
 	
@@ -92,7 +95,14 @@ System.out.println("listadapterset");
 		intent.putExtra("LATITUDE", latitude.get(position));
 		intent.putExtra("LONGITUDE", longitude.get(position));
 		intent.putExtra("TIME", time.get(position));
-		System.out.println("Pos: " + Integer.toString(position) + " Time: " + time.get(position));
+		intent.putExtra("PROGRESS", inProgress.get(position));
+		ArrayList<String> loc = _getLocation();
+	    String lat = loc.get(0);
+	    String lon = loc.get(1);
+		intent.putExtra("MYLATITUDE", lat);
+		intent.putExtra("MYLONGITUDE", lon);
+//		intent.putExtra("REQUESTER", requester);
+//		intent.putExtra("LAT_LONG", location[position]);
         startActivity(intent);
 	}
 	
@@ -134,8 +144,7 @@ System.out.println("listadapterset");
     		lon = -1.0;
     	}
     	
-    	System.out.println("Lat: " + lat);
-    	System.out.println("Lon: " + lon);
+    	System.out.println("Responder Latitude: " + lat + " Longitude: " + lon);
     	
     	ArrayList<String> result = new ArrayList<String>();
     	result.add(Double.toString(lat));

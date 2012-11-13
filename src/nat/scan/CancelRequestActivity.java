@@ -45,7 +45,7 @@ public class CancelRequestActivity extends Activity {
     	//save requested state in the preference
     	SharedPreferences mySharedPreferences = getSharedPreferences("scan", 1);
     	SharedPreferences.Editor editor = mySharedPreferences.edit();
-		editor.putString("requested_help", "");
+		editor.putString("requested_help", "0");
 		editor.commit();
     	
 		super.finish();
@@ -82,10 +82,7 @@ public class CancelRequestActivity extends Activity {
     		//JSONObject finalResult = new JSONObject(tokener);
     		
 
-    	} catch (ClientProtocolException e) {
-    		e.printStackTrace();
-    	} catch (IOException e) {
-    		//System.out.println("IO errors");
+    	} catch (Exception e) {
     		e.printStackTrace();
     	} 
     }

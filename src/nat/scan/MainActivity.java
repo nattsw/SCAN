@@ -58,6 +58,7 @@ public class MainActivity extends Activity {
 	        if (result.get(0).equals("200")) { //code 200 means success
 				JSONObject reply1 = new JSONObject(result.get(1));
 				JSONObject userDetails = new JSONObject(reply1.getString("info"));
+				System.out.println("Login User Details from Server: \n" + userDetails.toString());
 				
 		        //create or retrieve the shared preference object
 				SharedPreferences mySharedPreferences = getSharedPreferences("scan", 1);				
@@ -68,6 +69,7 @@ public class MainActivity extends Activity {
 				editor.putString("name", userDetails.getString("username")); 
 				editor.putString("isHelper", userDetails.getString("isHelper")); 
 				editor.putString("date_of_birth", userDetails.getString("dob"));
+				editor.putString("request_help", "0");
 				editor.commit();
 				
 				Intent intent = new Intent(this, SubActivity.class);
@@ -79,7 +81,6 @@ public class MainActivity extends Activity {
 	        	Toast.makeText(this, "Login Fail: Error " + result.get(0), Toast.LENGTH_SHORT).show();
     	} catch (Exception e) {
     		e.printStackTrace();
-    		System.out.println("login catch: " + e.getMessage());
     		Toast.makeText(this, "Check your internet connectivity.", Toast.LENGTH_LONG).show();
     	}
     }
