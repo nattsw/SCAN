@@ -73,8 +73,10 @@ public class ItemsOverlay extends ItemizedOverlay<OverlayItem> {
 	        });
         }
         msg = msg.substring(0, msg.length()-1);
-        dialog.setMessage(item.getSnippet());
-        dialog.show();
+        dialog.setMessage(msg);
+        
+        if (!msg.isEmpty())
+        	dialog.show();
         return true;
     }
 }

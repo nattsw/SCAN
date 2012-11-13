@@ -48,7 +48,7 @@ public class MapsActivity extends MapActivity  {
         	if (extras.containsKey("MYLATITUDE") && extras.containsKey("MYLONGITUDE")) {    
 	        	double myLatitude = Double.parseDouble(extras.getString("MYLATITUDE"));
 	            double myLongitude = Double.parseDouble(extras.getString("MYLONGITUDE"));
-	            AddOverlay("Your Location", myLatitude, myLongitude, "" , "1");
+	            AddOverlay("Your Location", myLatitude, myLongitude, "" , "", "1");
 	        }
         	
         	//add requester overlay and include respond button if can be responded to
@@ -64,14 +64,14 @@ public class MapsActivity extends MapActivity  {
 				else
 					respondButton = "1";
 				
-				AddOverlay(request.get("requester_name").toString(), requesterLatitude, 
-						requesterLongitude, request.get("requested_time").toString(), respondButton);
+				AddOverlay(request.get("requester_name").toString(), requesterLatitude, requesterLongitude, 
+						request.get("requested_time").toString(), request.get("details").toString(), respondButton);
 				
 				//zoom mapview to requester location
 	            GeoPoint requesterLocation = new GeoPoint((int) (requesterLatitude * 1E6), (int) (requesterLongitude * 1E6));
 	            mapController.animateTo(requesterLocation);
 			} catch (Exception e) {
-				Toast.makeText(this, "Error: Cannot show requester location.", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "Error: Cannot show requester location.", Toast.LENGTH_SHORT).show();
 			}
 	        
             mapController.setZoom(15);
@@ -79,7 +79,7 @@ public class MapsActivity extends MapActivity  {
         }
     }
     
-    public void AddOverlay(String title, double lat, double lon, String time, String respondButton)
+    public void AddOverlay(String title, double lat, double lon, String time, String problem, String respondButton)
     {
         GeoPoint overlayLoc = new GeoPoint((int) (lat * 1E6), (int) (lon * 1E6));
     	listOfOverlays = mapView.getOverlays();
@@ -90,12 +90,14 @@ public class MapsActivity extends MapActivity  {
         if (!time.equals("")) {
         	drawable = this.getResources().getDrawable(R.drawable.redandroid);
         	itemizedoverlay = new ItemsOverlay(drawable, this);
-        	overlayitem = new OverlayItem(overlayLoc, title, "Location " + Double.toString(lat) + ", "  + Double.toString(lon) + "\nTime: " + time + " " + respondButton);
+        	if (problem.isEmpty())
+        		problem = "Not mentioned.";
+        	overlayitem = new OverlayItem(overlayLoc, title, "Time: " + time + "\nProblem: " + problem + " " + respondButton);
         }
         else {
         	drawable = this.getResources().getDrawable(R.drawable.blueandroid);
         	itemizedoverlay = new ItemsOverlay(drawable, this);
-        	overlayitem = new OverlayItem(overlayLoc, title, "Location " + Double.toString(lat) + ", "  + Double.toString(lon) + " " + respondButton);
+        	overlayitem = new OverlayItem(overlayLoc, title, "" + respondButton);
         }
 
         //add an overlayitem
@@ -107,7 +109,7 @@ public class MapsActivity extends MapActivity  {
     public void ReAddOverlay(GeoPoint loc, String title, String snip)
     {
     	listOfOverlays = mapView.getOverlays();
-        Drawable drawable = this.getResources().getDrawable(R.drawable.ic_launcher);
+        Drawable drawable = this.getResources().getDrawable(R.drawable.redandroid);
         ItemsOverlay itemizedoverlay = new ItemsOverlay(drawable, this);
         OverlayItem overlayitem;
         
@@ -131,7 +133,7 @@ public class MapsActivity extends MapActivity  {
 	    	ArrayList<String> result = getRequests.get();
 	    	
 		    	if (result.get(0).equals("200")) {
-		    		Toast.makeText(this, "Responded to " + request.get("requester_name").toString(), Toast.LENGTH_LONG).show();
+		    		Toast.makeText(this, "Responded to " + request.get("requester_name").toString(), Toast.LENGTH_SHORT).show();
 		    		
 		    		listOfOverlays.remove(overlayIndex);
 		    		ReAddOverlay(loc, title, snip);

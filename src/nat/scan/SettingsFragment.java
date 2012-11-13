@@ -8,6 +8,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -73,7 +75,7 @@ public class SettingsFragment extends Fragment {
     	String inputDate = editDate.getText().toString();
     	if (inputName.equals(""))
     	{
-    		Toast.makeText(getActivity(), "Unsuccessful:\nName field is empty.", Toast.LENGTH_LONG).show();
+    		Toast.makeText(getActivity(), "Unsuccessful:\nName field is empty.", Toast.LENGTH_SHORT).show();
     	} else {
 	    	update(inputName, inputPassword, inputDate);
     	}
@@ -82,34 +84,44 @@ public class SettingsFragment extends Fragment {
     
     private void update(String inputName, String inputPassword, String inputDate)
     {
+    	ArrayList<String> result = new ArrayList<String>();
     	final CheckBox checkBox = (CheckBox) getView().findViewById(R.id.update_checkbox);
     	boolean isHelper = checkBox.isChecked();
-    	String temp;
-    	if(isHelper) {
-    		temp = "1";
-    	}
-    	else {
-    		temp = "0";
-    	}
-    	HttpClient httpclient = new DefaultHttpClient();   
-    	HttpPost httppost = new HttpPost(SERVICE_URL); 
-
-    	// data to send to server   
-    	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);   
-    	//nameValuePairs.add(new BasicNameValuePair("id", id));
-    	nameValuePairs.add(new BasicNameValuePair("username", inputName));
-    	nameValuePairs.add(new BasicNameValuePair("password", inputPassword));
-    	nameValuePairs.add(new BasicNameValuePair("isHelper", temp));
-    	System.out.println(inputName + " " + inputPassword + " " + temp);
+    	String  isHelperString = (isHelper == true) ? "1" : "2";
+    	
+//    	HttpClient httpclient = new DefaultHttpClient();   
+//    	HttpPost httppost = new HttpPost(SERVICE_URL); 
+//
+//    	// data to send to server   
+//    	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
+//    	nameValuePairs.add(new BasicNameValuePair("username", inputName));
+//    	nameValuePairs.add(new BasicNameValuePair("password", inputPassword));
+//    	nameValuePairs.add(new BasicNameValuePair("dob", inputDate));
+//    	nameValuePairs.add(new BasicNameValuePair("isHelper", temp));
+    	System.out.println(inputName + " " + inputPassword + " " + isHelperString);
+    	
     	try {
-    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-    		httpclient.execute(httppost);
-    		//save data
-    		savePreferences(inputName, inputPassword, inputDate, temp);
-    		Toast.makeText(getActivity(), "Your profile has been updated.", Toast.LENGTH_LONG).show();
+//    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//    		httpclient.execute(httppost);
+    		
+    		Posts update = new Posts();
+    		update.execute("/update", inputName, inputPassword, inputDate, isHelperString);
+        	result = update.get();
+        	
+        	System.out.println("/update: Status Code: " + result.get(0)); //statuscode
+        	System.out.println("/update: Entity : " + result.get(1)); //entity 
+        	
+        	if (result.get(0).equals("200")) {
+        		//save data
+        		savePreferences(inputName, inputPassword, inputDate, isHelperString);
+        		Toast.makeText(getActivity(), "Your profile has been updated.", Toast.LENGTH_SHORT).show();
+        	}
+        	else {
+        		Toast.makeText(getActivity(), "Failed to update profile.", Toast.LENGTH_SHORT).show();
+        	}
     	} catch (Exception e) {
-    		e.printStackTrace();
-    		Toast.makeText(getActivity(), "Failed to update profile.", Toast.LENGTH_LONG).show();
+    		System.out.println(e.getMessage());
+    		Toast.makeText(getActivity(), "Failed to update profile.", Toast.LENGTH_SHORT).show();
     	}    	
     }
     
@@ -119,7 +131,7 @@ public class SettingsFragment extends Fragment {
     	mySharedPreferences.edit().commit();
     	
     	
-    	Toast.makeText(getActivity(), "Logged Out.", Toast.LENGTH_LONG).show();
+    	Toast.makeText(getActivity(), "Logged Out.", Toast.LENGTH_SHORT).show();
     	getActivity().finish();
     }
     

@@ -61,6 +61,13 @@ public class Posts extends AsyncTask<String, Void, ArrayList<String>> {
 	            	nameValuePairs.add(new BasicNameValuePair("longitude", urls[3]));
 	            	nameValuePairs.add(new BasicNameValuePair("details", urls[4]));
 	            	request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	            } else if (urls[0].toString().equals("/update")) {
+	            	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+	            	nameValuePairs.add(new BasicNameValuePair("username", urls[1]));
+	            	nameValuePairs.add(new BasicNameValuePair("password", urls[2]));
+	            	nameValuePairs.add(new BasicNameValuePair("dob", urls[3]));
+	            	nameValuePairs.add(new BasicNameValuePair("isHelper", urls[4]));
+	            	request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 	            } else if (urls[0].toString().equals("/acceptRequest")) {
 	            	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
 //	            	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
@@ -77,7 +84,7 @@ public class Posts extends AsyncTask<String, Void, ArrayList<String>> {
 				
 				result.add(Integer.toString(response.getStatusLine().getStatusCode()));
 				
-				if (urls[0].toString().equals("/login") || urls[0].toString().equals("/getRequests") || urls[0].toString().equals("/register") || urls[0].toString().equals("/requestHelp") || urls[0].toString().equals("/acceptRequest"))
+				if (urls[0].toString().equals("/login") || urls[0].toString().equals("/getRequests") || urls[0].toString().equals("/register") || urls[0].toString().equals("/requestHelp") || urls[0].toString().equals("/acceptRequest") || urls[0].toString().equals("/update"))
 	            { 
 		            char[] buffer = new char[(int) responseEntity.getContentLength()];
 					InputStream stream = responseEntity.getContent();
@@ -85,6 +92,7 @@ public class Posts extends AsyncTask<String, Void, ArrayList<String>> {
 					reader.read(buffer);
 					stream.close();
 					String bufString = new String (buffer);
+					System.out.println(bufString);
 					result.add(bufString);
 	            } else
 	            	result.add("");

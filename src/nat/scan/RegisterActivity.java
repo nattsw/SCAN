@@ -63,11 +63,11 @@ public class RegisterActivity extends Activity{
 	    	} else {
 	    		String result = register(inputName, inputPassword, inputDate, isHelper);
 		    	if (!result.equals("")) {
-		    		Toast.makeText(this, "Successful registration, " + inputName + "!", Toast.LENGTH_LONG).show();
+		    		Toast.makeText(this, "Successful registration, " + inputName + "!", Toast.LENGTH_SHORT).show();
 		    		super.onBackPressed();
 		    	}
 		    	else
-		    		Toast.makeText(this, "Your registration was unsuccessful. (Change username?)", Toast.LENGTH_LONG).show();
+		    		Toast.makeText(this, "Your registration was unsuccessful. (Change username?)", Toast.LENGTH_SHORT).show();
 	    	}
     	} catch (Exception e)
     	{
@@ -101,9 +101,9 @@ public class RegisterActivity extends Activity{
     	String  isHelperString = (isHelper == true) ? "1" : "2";
     	
     	try {
-    		Posts getRequests = new Posts();
-        	getRequests.execute("/register", inputName, inputPassword, inputDate, isHelperString);
-        	result = getRequests.get();
+    		Posts register = new Posts();
+    		register.execute("/register", inputName, inputPassword, inputDate, isHelperString);
+        	result = register.get();
         	
         	System.out.println("/register: Status Code: " + result.get(0)); //statuscode
         	System.out.println("/register: Entity : " + result.get(1)); //entity

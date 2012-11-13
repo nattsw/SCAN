@@ -40,7 +40,7 @@ public class CancelRequestActivity extends Activity {
     	String name = settings.getString("name", "");
     	
     	cancel_request(name); 
-    	Toast.makeText(this, "The request has been cancelled!", Toast.LENGTH_LONG).show();
+    	Toast.makeText(this, "The request has been cancelled!", Toast.LENGTH_SHORT).show();
     	
     	//save requested state in the preference
     	SharedPreferences mySharedPreferences = getSharedPreferences("scan", 1);

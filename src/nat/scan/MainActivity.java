@@ -81,7 +81,7 @@ public class MainActivity extends Activity {
 	        	Toast.makeText(this, "Login Fail: Error " + result.get(0), Toast.LENGTH_SHORT).show();
     	} catch (Exception e) {
     		e.printStackTrace();
-    		Toast.makeText(this, "Check your internet connectivity.", Toast.LENGTH_LONG).show();
+    		Toast.makeText(this, "Check your internet connectivity.", Toast.LENGTH_SHORT).show();
     	}
     }
 

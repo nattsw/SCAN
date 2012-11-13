@@ -147,7 +147,7 @@ public class RequestFragment extends Fragment {
     	if (requested_help.equals("0")) {
     		if (!request_help(name, lat, lon, details).equals(""))
     		{
-	    		Toast.makeText(getActivity(), "Help request sent!", Toast.LENGTH_LONG).show();
+	    		Toast.makeText(getActivity(), "Help request sent!", Toast.LENGTH_SHORT).show();
 	    	
 		    	//save requested state in the preference
 		    	SharedPreferences mySharedPreferences = getActivity().getSharedPreferences("scan", 1);
@@ -159,11 +159,11 @@ public class RequestFragment extends Fragment {
 		    	startActivity(intent);	
     		}
     		else {
-    			Toast.makeText(getActivity(), "Unable to request for help!", Toast.LENGTH_LONG).show();
+    			Toast.makeText(getActivity(), "Unable to request for help!", Toast.LENGTH_SHORT).show();
     		}
     	}
     	else{
-    		Toast.makeText(getActivity(), "Help request has already been sent!", Toast.LENGTH_LONG).show();
+    		Toast.makeText(getActivity(), "Help request has already been sent!", Toast.LENGTH_SHORT).show();
     		Intent intent = new Intent(getActivity(), CancelRequestActivity.class);
         	startActivity(intent);
     	}

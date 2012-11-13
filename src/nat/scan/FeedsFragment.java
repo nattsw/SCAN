@@ -64,10 +64,46 @@ public class FeedsFragment extends ListFragment {
 		setListAdapter(adapter);
     }
 	
+	//when the user returns to this fragment from e.g. maps
+	public void onResume() {
+		super.onResume();
+
+		/*get the user location to update server*/
+		ArrayList<String> loc = _getLocation();
+	    String lat = loc.get(0);
+	    String lon = loc.get(1);
+	    
+		try {        
+			/*HTTPGet for Requests*/
+	    	Posts getRequests = new Posts();
+	    	getRequests.execute("/getRequests", lat, lon);
+	    	ArrayList<String> result = getRequests.get();
+	    	
+		    	if (result.get(0).equals("200")) {
+			    	JSONObject reply1 = new JSONObject(result.get(1));
+			    	requests = new JSONArray(reply1.getString("requests"));
+					
+			    	System.out.println("/getRequest: Result " + requests.toString());
+
+			    	username = new ArrayList<String>();
+			    	Toast.makeText(getActivity(), Integer.toString(requests.length()) + " request(s)", Toast.LENGTH_SHORT).show();
+			    	for(int i=0;i<requests.length();i++)
+			    	{
+			    		JSONObject request = (JSONObject) requests.get(i);
+			    		username.add(request.get("requester_name").toString());
+			    	}
+		    	}
+  		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),	android.R.layout.simple_list_item_1, username);
+		setListAdapter(adapter);
+	}
+	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		try {
-			String requester = (String) getListAdapter().getItem(position);
 			JSONObject reqMaps = (JSONObject) requests.get(position);
 			SharedPreferences settings = getActivity().getSharedPreferences("scan", 1);
 			String responderID = settings.getString("id", "");
