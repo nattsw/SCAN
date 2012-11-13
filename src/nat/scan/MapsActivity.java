@@ -16,6 +16,9 @@ import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 import android.os.Bundle;
 import android.widget.Toast;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 
 public class MapsActivity extends MapActivity  {
@@ -23,44 +26,54 @@ public class MapsActivity extends MapActivity  {
 	private MapView mapView;
 	private MapController mapController;
 	List<Overlay> listOfOverlays;
-	String requestID;
+	JSONObject request;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         
+        //setup mapView and mapController
+        mapView = (MapView)findViewById(R.id.mapView);
+    	mapController = mapView.getController();
+    	mapView.setBuiltInZoomControls(true);
+    	
+    	//get stuff from previous intent
         Bundle extras = getIntent().getExtras();
+        
+        //check if has requester details in json
         if (extras.containsKey("REQJSON")) {
-        	mapView = (MapView)findViewById(R.id.mapView);
-        	mapController = mapView.getController();
-        	mapView.setBuiltInZoomControls(true);
         	
-        	//set Requester Details
+        	//check if has responder (my) details and add overlay on map, last value "1" means do not show respond button
+        	if (extras.containsKey("MYLATITUDE") && extras.containsKey("MYLONGITUDE")) {    
+	        	double myLatitude = Double.parseDouble(extras.getString("MYLATITUDE"));
+	            double myLongitude = Double.parseDouble(extras.getString("MYLONGITUDE"));
+	            AddOverlay("Your Location", myLatitude, myLongitude, "" , "1");
+	        }
+        	
+        	//add requester overlay and include respond button if can be responded to
         	try {
-				JSONObject request = new JSONObject(extras.getString("REQJSON"));
-				requestID = request.get("id").toString();
+				request = new JSONObject(extras.getString("REQJSON"));
 				double requesterLatitude = Double.parseDouble(request.get("latitude").toString());
 				double requesterLongitude = Double.parseDouble(request.get("longitude").toString());
+				
+				//check if should show respond button for the responder to /acceptRequest
+				String respondButton = "";
+				if (request.get("in_progress").toString().equals("0"))
+					respondButton = "0";
+				else
+					respondButton = "1";
+				
 				AddOverlay(request.get("requester_name").toString(), requesterLatitude, 
-						requesterLongitude, request.get("requested_time").toString(), request.get("in_progress").toString());
+						requesterLongitude, request.get("requested_time").toString(), respondButton);
+				
+				//zoom mapview to requester location
 	            GeoPoint requesterLocation = new GeoPoint((int) (requesterLatitude * 1E6), (int) (requesterLongitude * 1E6));
 	            mapController.animateTo(requesterLocation);
 			} catch (Exception e) {
 				Toast.makeText(this, "Error: Cannot show requester location.", Toast.LENGTH_LONG).show();
 			}
-//        	requestID = extras.getString("REQUESTERID");
-//            String requesterName = extras.getString("REQUESTER");
-//            double requesterLatitude = Double.parseDouble(extras.getString("LATITUDE"));
-//            double requesterLongitude = Double.parseDouble(extras.getString("LONGITUDE"));
-//            String requestedTime = extras.getString("TIME");
-//            String requestInProgress = extras.getString("PROGRESS");
-//          AddOverlay(requesterName, requesterLatitude, requesterLongitude, requestedTime, requestInProgress);
-	        if (extras.containsKey("MYLATITUDE") && extras.containsKey("MYLONGITUDE")) {    
-	        	double myLatitude = Double.parseDouble(extras.getString("MYLATITUDE"));
-	            double myLongitude = Double.parseDouble(extras.getString("MYLONGITUDE"));
-	            AddOverlay("Your Location", myLatitude, myLongitude, "" , "1");
-	        }
+	        
             mapController.setZoom(15);
             mapView.invalidate();
         }
@@ -70,14 +83,20 @@ public class MapsActivity extends MapActivity  {
     {
         GeoPoint overlayLoc = new GeoPoint((int) (lat * 1E6), (int) (lon * 1E6));
     	listOfOverlays = mapView.getOverlays();
-        Drawable drawable = this.getResources().getDrawable(R.drawable.ic_launcher);
-        ItemsOverlay itemizedoverlay = new ItemsOverlay(drawable, this);
+        Drawable drawable;
+        ItemsOverlay itemizedoverlay;
         OverlayItem overlayitem;
         
-        if (!time.equals(""))	
+        if (!time.equals("")) {
+        	drawable = this.getResources().getDrawable(R.drawable.redandroid);
+        	itemizedoverlay = new ItemsOverlay(drawable, this);
         	overlayitem = new OverlayItem(overlayLoc, title, "Location " + Double.toString(lat) + ", "  + Double.toString(lon) + "\nTime: " + time + " " + respondButton);
-        else
+        }
+        else {
+        	drawable = this.getResources().getDrawable(R.drawable.blueandroid);
+        	itemizedoverlay = new ItemsOverlay(drawable, this);
         	overlayitem = new OverlayItem(overlayLoc, title, "Location " + Double.toString(lat) + ", "  + Double.toString(lon) + " " + respondButton);
+        }
 
         //add an overlayitem
         itemizedoverlay.addOverlay(overlayitem);
@@ -85,15 +104,38 @@ public class MapsActivity extends MapActivity  {
         listOfOverlays.add(itemizedoverlay);
     }
     
-    public String RespondToRequest() {
+    public void ReAddOverlay(GeoPoint loc, String title, String snip)
+    {
+    	listOfOverlays = mapView.getOverlays();
+        Drawable drawable = this.getResources().getDrawable(R.drawable.ic_launcher);
+        ItemsOverlay itemizedoverlay = new ItemsOverlay(drawable, this);
+        OverlayItem overlayitem;
+        
+       	overlayitem = new OverlayItem(loc, title, snip);
+        
+        //add an overlayitem
+        itemizedoverlay.addOverlay(overlayitem);
+        //add the overlay
+        listOfOverlays.add(itemizedoverlay);
+    }
+    
+    public String RespondToRequest(int overlayIndex, GeoPoint loc, String title, String snip) {
 		try {        
-			/*HTTPGet for Requests*/
 	    	Posts getRequests = new Posts();
-	    	getRequests.execute("/acceptRequest", requestID);
+	    	getRequests.execute("/acceptRequest", request.get("id").toString());
+
+//			SharedPreferences settings = getSharedPreferences("scan", 1);
+//			String responderID = settings.getString("id", "");
+//	    	getRequests.execute("/acceptRequest", request.get("id").toString(), responderID);
+	    	System.out.println("!!/acceptRequest!!");
 	    	ArrayList<String> result = getRequests.get();
 	    	
 		    	if (result.get(0).equals("200")) {
-		    		Toast.makeText(this, "Responded to ", Toast.LENGTH_LONG).show();
+		    		Toast.makeText(this, "Responded to " + request.get("requester_name").toString(), Toast.LENGTH_LONG).show();
+		    		
+		    		listOfOverlays.remove(overlayIndex);
+		    		ReAddOverlay(loc, title, snip);
+		    	    return "1";
 		    	}
   		} catch (Exception e) {
 			e.printStackTrace();

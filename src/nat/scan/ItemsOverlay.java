@@ -59,8 +59,8 @@ public class ItemsOverlay extends ItemizedOverlay<OverlayItem> {
 
     //---called when the user taps on the OverlayItem objects---
     @Override
-    protected boolean onTap(int index) {
-        OverlayItem item = mOverlays.get(index);
+    protected boolean onTap(final int index) {
+        final OverlayItem item = mOverlays.get(index);
         AlertDialog.Builder dialog = new AlertDialog.Builder(mapsActivity);
         dialog.setTitle(item.getTitle());
         String msg = item.getSnippet();
@@ -68,8 +68,7 @@ public class ItemsOverlay extends ItemizedOverlay<OverlayItem> {
         {
 	        dialog.setPositiveButton("Respond!", new DialogInterface.OnClickListener() {
 	            public void onClick(DialogInterface dialog, int id) {
-	                 //do things
-	            	String result = mapsActivity.RespondToRequest();
+	            	mapsActivity.RespondToRequest(index, item.getPoint(), item.getTitle(), item.getSnippet().substring(0, item.getSnippet().length()-1) + "1");
 	            }
 	        });
         }

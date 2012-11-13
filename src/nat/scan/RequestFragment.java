@@ -136,10 +136,16 @@ public class RequestFragment extends Fragment {
     	String lat = String.valueOf(latitude);
     	String lon = String.valueOf(longitude);
     	String requested_help = settings.getString("requested_help", "");
+    	String details = "";
+    	final CheckBox addCheckbox = ( CheckBox ) getView().findViewById( R.id.additional_checkbox );
+		if (addCheckbox.isChecked()) {
+			final EditText detailsTextfield = (EditText) getView().findViewById( R.id.details_textfield );
+			details = detailsTextfield.getText().toString();
+		}
     	System.out.println(name + " " + lat + " " + lon + " rh:" + requested_help);
     	
     	if (requested_help.equals("0")) {
-    		if (!request_help(name, lat, lon).equals(""))
+    		if (!request_help(name, lat, lon, details).equals(""))
     		{
 	    		Toast.makeText(getActivity(), "Help request sent!", Toast.LENGTH_LONG).show();
 	    	
@@ -163,14 +169,14 @@ public class RequestFragment extends Fragment {
     	}
     }
     
-    private String request_help(String username, String lat, String lon)
+    private String request_help(String username, String lat, String lon, String details)
     {	
     	ArrayList<String> result = new ArrayList<String>();
     	
     	try {
-    		Posts getRequests = new Posts();
-        	getRequests.execute("/requestHelp", username, lat, lon);
-        	result = getRequests.get();
+    		Posts requestHelp = new Posts();
+    		requestHelp.execute("/requestHelp", username, lat, lon, details);
+        	result = requestHelp.get();
         	
         	System.out.println(result.get(0)); //statuscode
         	System.out.println(result.get(1)); //entity

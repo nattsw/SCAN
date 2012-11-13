@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import android.app.ListFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -24,13 +25,7 @@ public class FeedsFragment extends ListFragment {
 	
 	//to populate the list
 	ArrayList<String> username;
-	
 	JSONArray requests;
-//	ArrayList<String> reqID;
-//	ArrayList<String> time;
-//	ArrayList<String> latitude;
-//	ArrayList<String> longitude;
-//	ArrayList<String> inProgress;
 	
 	@Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -54,21 +49,11 @@ public class FeedsFragment extends ListFragment {
 			    	System.out.println("/getRequest: Result " + requests.toString());
 
 			    	username = new ArrayList<String>();
-//			    	reqID = new ArrayList<String>();
-//			    	time = new ArrayList<String>();
-//			    	latitude = new ArrayList<String>();
-//			    	longitude = new ArrayList<String>();
-//			    	inProgress = new ArrayList<String>();
 			    	Toast.makeText(getActivity(), Integer.toString(requests.length()) + " request(s)", Toast.LENGTH_SHORT).show();
 			    	for(int i=0;i<requests.length();i++)
 			    	{
 			    		JSONObject request = (JSONObject) requests.get(i);
 			    		username.add(request.get("requester_name").toString());
-//			    		reqID.add(request.get("id").toString());
-//			    		time.add(request.get("requested_time").toString());
-//			    		latitude.add(request.get("latitude").toString());
-//			    		longitude.add(request.get("longitude").toString());
-//			    		inProgress.add(request.get("in_progress").toString());
 			    	}
 		    	}
   		} catch (Exception e) {
@@ -83,23 +68,22 @@ public class FeedsFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		try {
 			String requester = (String) getListAdapter().getItem(position);
-			Toast.makeText(getActivity(), requester + " selected", Toast.LENGTH_LONG).show();
-			Intent intent = new Intent(getActivity(), MapsActivity.class);
-			intent.putExtra("REQJSON", requests.get(position).toString());
-//			intent.putExtra("REQUESTER", requester);
-//			intent.putExtra("REQUESTERID", reqID.get(position));
-//			intent.putExtra("LATITUDE", latitude.get(position));
-//			intent.putExtra("LONGITUDE", longitude.get(position));
-//			intent.putExtra("TIME", time.get(position));
-//			intent.putExtra("PROGRESS", inProgress.get(position));
-			ArrayList<String> loc = _getLocation();
-		    String lat = loc.get(0);
-		    String lon = loc.get(1);
-			intent.putExtra("MYLATITUDE", lat);
-			intent.putExtra("MYLONGITUDE", lon);
-	        startActivity(intent);
+			JSONObject reqMaps = (JSONObject) requests.get(position);
+			SharedPreferences settings = getActivity().getSharedPreferences("scan", 1);
+			String responderID = settings.getString("id", "");
+			if (reqMaps.get("in_progress").toString().equals("0") || reqMaps.get("in_progress").toString().equals(responderID))
+			{
+				Intent intent = new Intent(getActivity(), MapsActivity.class);
+				intent.putExtra("REQJSON", requests.get(position).toString());
+				ArrayList<String> loc = _getLocation();
+			    String lat = loc.get(0);
+			    String lon = loc.get(1);
+				intent.putExtra("MYLATITUDE", lat);
+				intent.putExtra("MYLONGITUDE", lon);
+		        startActivity(intent);
+			} else 
+				Toast.makeText(getActivity(), "Request has been responded by someone else.", Toast.LENGTH_SHORT).show();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			Toast.makeText(getActivity(), "Error: Refresh Page please.", Toast.LENGTH_SHORT).show();
 			e.printStackTrace();
 		}

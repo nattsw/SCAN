@@ -26,9 +26,7 @@ public class SplashActivity extends Activity {
 			public void run(){
 		    	SharedPreferences settings = getSharedPreferences("scan", 1);
 				String requested_help = settings.getString("requested_help", "");
-				System.out.println("Splash requested_help: " + requested_help);
-//				finish();
-				String id = getId();
+				String id = settings.getString("id", "");
 				if(id == "") {
 					SharedPreferences.Editor editor = settings.edit();
 					editor.putString("requested_help", "0");
