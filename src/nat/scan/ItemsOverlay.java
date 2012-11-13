@@ -13,14 +13,21 @@ public class ItemsOverlay extends ItemizedOverlay<OverlayItem> {
     //---array of OverlayItem objects---
     private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
     Context mContext;
+    MapsActivity mapsActivity;
+
 
     public ItemsOverlay(Drawable defaultMarker) {
           super(boundCenterBottom(defaultMarker));
     }
 
-    public ItemsOverlay(Drawable defaultMarker, Context context) {
-          super(boundCenterBottom(defaultMarker));
-          mContext = context;
+//    public ItemsOverlay(Drawable defaultMarker, Context context) {
+//          super(boundCenterBottom(defaultMarker));
+//          mContext = context;
+//    }
+    
+    public ItemsOverlay(Drawable defaultMarker, MapsActivity tActivity) {
+    	super(boundCenterBottom(defaultMarker));
+    	mapsActivity = tActivity;
     }
 
     //---add an OverlayItem object to the map---
@@ -54,7 +61,7 @@ public class ItemsOverlay extends ItemizedOverlay<OverlayItem> {
     @Override
     protected boolean onTap(int index) {
         OverlayItem item = mOverlays.get(index);
-        AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(mapsActivity);
         dialog.setTitle(item.getTitle());
         String msg = item.getSnippet();
         if (msg.endsWith("0"))
@@ -62,7 +69,7 @@ public class ItemsOverlay extends ItemizedOverlay<OverlayItem> {
 	        dialog.setPositiveButton("Respond!", new DialogInterface.OnClickListener() {
 	            public void onClick(DialogInterface dialog, int id) {
 	                 //do things
-	            	
+	            	String result = mapsActivity.RespondToRequest();
 	            }
 	        });
         }

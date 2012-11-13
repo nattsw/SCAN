@@ -3,6 +3,7 @@ package nat.scan;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ListFragment;
@@ -19,22 +20,17 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class FeedsFragment extends ListFragment {
-	int debug = 0;
-	
 	LocationManager locationManager;
 	
-	ArrayList<String> reqID;
+	//to populate the list
 	ArrayList<String> username;
-	ArrayList<String> time;
-	ArrayList<String> latitude;
-	ArrayList<String> longitude;
-	ArrayList<String> inProgress;
 	
-	String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-	  "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-	  "Linux", "OS/2" };
-	
-	double[][] location = new double[][] { {100,1}, {1,100}, {103.8,1.3667}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0} };
+	JSONArray requests;
+//	ArrayList<String> reqID;
+//	ArrayList<String> time;
+//	ArrayList<String> latitude;
+//	ArrayList<String> longitude;
+//	ArrayList<String> inProgress;
 	
 	@Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -53,57 +49,60 @@ public class FeedsFragment extends ListFragment {
 	    	
 		    	if (result.get(0).equals("200")) {
 			    	JSONObject reply1 = new JSONObject(result.get(1));
-			    	JSONArray requests = new JSONArray(reply1.getString("requests"));
+			    	requests = new JSONArray(reply1.getString("requests"));
 					
 			    	System.out.println("/getRequest: Result " + requests.toString());
 
-			    	reqID = new ArrayList<String>();
 			    	username = new ArrayList<String>();
-			    	time = new ArrayList<String>();
-			    	latitude = new ArrayList<String>();
-			    	longitude = new ArrayList<String>();
-			    	inProgress = new ArrayList<String>();
+//			    	reqID = new ArrayList<String>();
+//			    	time = new ArrayList<String>();
+//			    	latitude = new ArrayList<String>();
+//			    	longitude = new ArrayList<String>();
+//			    	inProgress = new ArrayList<String>();
 			    	Toast.makeText(getActivity(), Integer.toString(requests.length()) + " request(s)", Toast.LENGTH_SHORT).show();
 			    	for(int i=0;i<requests.length();i++)
 			    	{
 			    		JSONObject request = (JSONObject) requests.get(i);
-			    		reqID.add(request.get("id").toString());
 			    		username.add(request.get("requester_name").toString());
-			    		time.add(request.get("requested_time").toString());
-			    		latitude.add(request.get("latitude").toString());
-			    		longitude.add(request.get("longitude").toString());
-			    		inProgress.add(request.get("in_progress").toString());
+//			    		reqID.add(request.get("id").toString());
+//			    		time.add(request.get("requested_time").toString());
+//			    		latitude.add(request.get("latitude").toString());
+//			    		longitude.add(request.get("longitude").toString());
+//			    		inProgress.add(request.get("in_progress").toString());
 			    	}
 		    	}
-	  		} catch (Exception e) {
-				e.printStackTrace();
+  		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity() ,
-				  android.R.layout.simple_list_item_1, username);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),	android.R.layout.simple_list_item_1, username);
 		setListAdapter(adapter);
-//		debug ++;
-//		Toast.makeText(getActivity(), "list created " + Integer.toString(debug) + " time(s)", Toast.LENGTH_SHORT).show();
     }
 	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		String requester = (String) getListAdapter().getItem(position);
-		Toast.makeText(getActivity(), requester + " selected", Toast.LENGTH_LONG).show();
-		Intent intent = new Intent(getActivity(), MapsActivity.class);
-		intent.putExtra("REQUESTER", requester);
-		intent.putExtra("LATITUDE", latitude.get(position));
-		intent.putExtra("LONGITUDE", longitude.get(position));
-		intent.putExtra("TIME", time.get(position));
-		intent.putExtra("PROGRESS", inProgress.get(position));
-		ArrayList<String> loc = _getLocation();
-	    String lat = loc.get(0);
-	    String lon = loc.get(1);
-		intent.putExtra("MYLATITUDE", lat);
-		intent.putExtra("MYLONGITUDE", lon);
-//		intent.putExtra("REQUESTER", requester);
-//		intent.putExtra("LAT_LONG", location[position]);
-        startActivity(intent);
+		try {
+			String requester = (String) getListAdapter().getItem(position);
+			Toast.makeText(getActivity(), requester + " selected", Toast.LENGTH_LONG).show();
+			Intent intent = new Intent(getActivity(), MapsActivity.class);
+			intent.putExtra("REQJSON", requests.get(position).toString());
+//			intent.putExtra("REQUESTER", requester);
+//			intent.putExtra("REQUESTERID", reqID.get(position));
+//			intent.putExtra("LATITUDE", latitude.get(position));
+//			intent.putExtra("LONGITUDE", longitude.get(position));
+//			intent.putExtra("TIME", time.get(position));
+//			intent.putExtra("PROGRESS", inProgress.get(position));
+			ArrayList<String> loc = _getLocation();
+		    String lat = loc.get(0);
+		    String lon = loc.get(1);
+			intent.putExtra("MYLATITUDE", lat);
+			intent.putExtra("MYLONGITUDE", lon);
+	        startActivity(intent);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(getActivity(), "Error: Refresh Page please.", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
 	}
 	
 	private ArrayList<String> _getLocation()
