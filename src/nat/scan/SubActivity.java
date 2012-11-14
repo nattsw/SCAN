@@ -53,9 +53,7 @@ public class SubActivity extends Activity {
 	public void onBackPressed() {
 		
 	}
-//	public void onRestart() {
-//		System.out.print("SUBACTIVITY ONRESTART");
-//	}
+
     private class TabListener<T extends Fragment> implements
             ActionBar.TabListener {
         private Fragment mFragment;

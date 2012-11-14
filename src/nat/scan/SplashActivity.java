@@ -10,12 +10,6 @@ import android.os.Bundle;
 public class SplashActivity extends Activity {
 	private long splashDelay = 3000;
 
-	private String getId() {
-		SharedPreferences settings = getSharedPreferences("scan", 1);
-		String id = settings.getString("id", "");
-		return id;
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,16 +19,14 @@ public class SplashActivity extends Activity {
 			@Override
 			public void run(){
 		    	SharedPreferences settings = getSharedPreferences("scan", 1);
-				String requested_help = settings.getString("requested_help", "");
 				String id = settings.getString("id", "");
 				if(id == "") {
-					SharedPreferences.Editor editor = settings.edit();
-					editor.putString("requested_help", "0");
-					editor.commit();
+					System.out.println("no id");
 					Intent mainIntent = new Intent().setClass(SplashActivity.this, MainActivity.class);
 					startActivity(mainIntent);
 				}
 				else{
+					System.out.println("id: " + id);
 					Intent mainIntent = new Intent().setClass(SplashActivity.this, SubActivity.class);
 					startActivity(mainIntent);
 				}

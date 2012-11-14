@@ -64,11 +64,18 @@ public class ItemsOverlay extends ItemizedOverlay<OverlayItem> {
         AlertDialog.Builder dialog = new AlertDialog.Builder(mapsActivity);
         dialog.setTitle(item.getTitle());
         String msg = item.getSnippet();
-        if (msg.endsWith("0"))
+        if (msg.endsWith("0")) // 0: respond button show 1: respond button hide 2: cancel button show
         {
 	        dialog.setPositiveButton("Respond!", new DialogInterface.OnClickListener() {
 	            public void onClick(DialogInterface dialog, int id) {
-	            	mapsActivity.RespondToRequest(index, item.getPoint(), item.getTitle(), item.getSnippet().substring(0, item.getSnippet().length()-1) + "1");
+	            	mapsActivity.RespondToRequest(item.getPoint(), item.getTitle(), item.getSnippet().substring(0, item.getSnippet().length()-1) + "2");
+	            }
+	        });
+        } else if (msg.endsWith("2")) // 0: respond button show 1: respond button hide 2: cancel button show
+        {
+	        dialog.setPositiveButton("Cancel!", new DialogInterface.OnClickListener() {
+	            public void onClick(DialogInterface dialog, int id) {
+	            	mapsActivity.CancelRespond();
 	            }
 	        });
         }

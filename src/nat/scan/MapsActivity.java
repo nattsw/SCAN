@@ -62,7 +62,7 @@ public class MapsActivity extends MapActivity  {
 				if (request.get("in_progress").toString().equals("0"))
 					respondButton = "0";
 				else
-					respondButton = "1";
+					respondButton = "2";
 				
 				AddOverlay(request.get("requester_name").toString(), requesterLatitude, requesterLongitude, 
 						request.get("requested_time").toString(), request.get("details").toString(), respondButton);
@@ -121,28 +121,48 @@ public class MapsActivity extends MapActivity  {
         listOfOverlays.add(itemizedoverlay);
     }
     
-    public String RespondToRequest(int overlayIndex, GeoPoint loc, String title, String snip) {
-		try {        
+    public void CancelRespond()
+    {
+    	try {        
 	    	Posts getRequests = new Posts();
-	    	getRequests.execute("/acceptRequest", request.get("id").toString());
-
-//			SharedPreferences settings = getSharedPreferences("scan", 1);
-//			String responderID = settings.getString("id", "");
-//	    	getRequests.execute("/acceptRequest", request.get("id").toString(), responderID);
-	    	System.out.println("!!/acceptRequest!!");
+			System.out.println("/acceptRequest, " + request.get("id").toString() + ", " + "0");
+	    	getRequests.execute("/acceptRequest", request.get("id").toString(), "0");
 	    	ArrayList<String> result = getRequests.get();
-	    	
 		    	if (result.get(0).equals("200")) {
-		    		Toast.makeText(this, "Responded to " + request.get("requester_name").toString(), Toast.LENGTH_SHORT).show();
-		    		
-		    		listOfOverlays.remove(overlayIndex);
-		    		ReAddOverlay(loc, title, snip);
-		    	    return "1";
+		    		Toast.makeText(this, "Cancelled response to " + request.get("requester_name").toString(), Toast.LENGTH_SHORT).show();
+		    		SharedPreferences mySharedPreferences = getSharedPreferences("scan", 1);				
+					SharedPreferences.Editor editor = mySharedPreferences.edit();
+					editor.putString("responded_help", "0");
+					editor.commit();
+		    		if (listOfOverlays.size()>0)
+		    			listOfOverlays.remove(0);
 		    	}
   		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	return "";
+    }
+    
+    public void RespondToRequest(GeoPoint loc, String title, String snip) {
+		try {        
+	    	Posts getRequests = new Posts();
+	    	SharedPreferences settings = getSharedPreferences("scan", 1);
+			String responderID = settings.getString("id", "");
+			System.out.println("/acceptRequest, " + request.get("id").toString() + ", " + responderID);
+	    	getRequests.execute("/acceptRequest", request.get("id").toString(), responderID);
+	    	ArrayList<String> result = getRequests.get();
+		    	if (result.get(0).equals("200")) {
+		    		Toast.makeText(this, "Responded to " + request.get("requester_name").toString(), Toast.LENGTH_SHORT).show();
+		    		SharedPreferences mySharedPreferences = getSharedPreferences("scan", 1);				
+					SharedPreferences.Editor editor = mySharedPreferences.edit();
+					editor.putString("responded_help", "1");
+					editor.commit();
+		    		if (listOfOverlays.size()>1)
+		    			listOfOverlays.remove(1);
+		    		ReAddOverlay(loc, title, snip);
+		    	}
+  		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
 
     //DO NOT REMOVE

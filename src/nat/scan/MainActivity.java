@@ -65,11 +65,12 @@ public class MainActivity extends Activity {
 				//Retrieve an editor to modify the shared preference
 				SharedPreferences.Editor editor = mySharedPreferences.edit();	
 				//store new primitive types in the shared preferences object 
-				editor.putString("userID", userDetails.getString("id")); 
+				editor.putString("id", userDetails.getString("id")); 
 				editor.putString("name", userDetails.getString("username")); 
 				editor.putString("isHelper", userDetails.getString("isHelper")); 
 				editor.putString("date_of_birth", userDetails.getString("dob"));
-				editor.putString("request_help", "0");
+				editor.putString("requested_help", "0");
+				editor.putString("responded_help", "0");
 				editor.commit();
 				
 				Intent intent = new Intent(this, SubActivity.class);

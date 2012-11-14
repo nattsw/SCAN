@@ -69,10 +69,9 @@ public class Posts extends AsyncTask<String, Void, ArrayList<String>> {
 	            	nameValuePairs.add(new BasicNameValuePair("isHelper", urls[4]));
 	            	request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 	            } else if (urls[0].toString().equals("/acceptRequest")) {
-	            	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
-//	            	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+	            	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 	            	nameValuePairs.add(new BasicNameValuePair("requestID", urls[1]));
-//	            	nameValuePairs.add(new BasicNameValuePair("responderID", urls[2]));
+	            	nameValuePairs.add(new BasicNameValuePair("responderID", urls[2]));
 	            	request.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 	            }
 	 

@@ -107,18 +107,23 @@ public class FeedsFragment extends ListFragment {
 			JSONObject reqMaps = (JSONObject) requests.get(position);
 			SharedPreferences settings = getActivity().getSharedPreferences("scan", 1);
 			String responderID = settings.getString("id", "");
-			if (reqMaps.get("in_progress").toString().equals("0") || reqMaps.get("in_progress").toString().equals(responderID))
-			{
-				Intent intent = new Intent(getActivity(), MapsActivity.class);
-				intent.putExtra("REQJSON", requests.get(position).toString());
-				ArrayList<String> loc = _getLocation();
-			    String lat = loc.get(0);
-			    String lon = loc.get(1);
-				intent.putExtra("MYLATITUDE", lat);
-				intent.putExtra("MYLONGITUDE", lon);
-		        startActivity(intent);
-			} else 
-				Toast.makeText(getActivity(), "Request has been responded by someone else.", Toast.LENGTH_SHORT).show();
+			String responderName = settings.getString("name", "");
+			if (!reqMaps.get("requester_name").equals(responderName)) {
+				if (reqMaps.get("in_progress").toString().equals("0") || reqMaps.get("in_progress").toString().equals(responderID))
+				{
+					Intent intent = new Intent(getActivity(), MapsActivity.class);
+					intent.putExtra("REQJSON", requests.get(position).toString());
+					ArrayList<String> loc = _getLocation();
+				    String lat = loc.get(0);
+				    String lon = loc.get(1);
+					intent.putExtra("MYLATITUDE", lat);
+					intent.putExtra("MYLONGITUDE", lon);
+			        startActivity(intent);
+				} else 
+					Toast.makeText(getActivity(), "Request has been responded by someone else.", Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(getActivity(), "Cannot respond, you need help!", Toast.LENGTH_SHORT).show();
+			}
 		} catch (JSONException e) {
 			Toast.makeText(getActivity(), "Error: Refresh Page please.", Toast.LENGTH_SHORT).show();
 			e.printStackTrace();

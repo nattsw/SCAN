@@ -74,25 +74,6 @@ public class RegisterActivity extends Activity{
     		System.out.println("registerbuttonclick exception: " + e.getMessage());
     	}
     }
-    
-    protected void savePreferences(String inputName, String inputPassword, String inputDate, String isHelper){
-	
-		//create or retrieve the shared preference object
-		SharedPreferences mySharedPreferences = getSharedPreferences("scan", 1);
-		
-		//Retrieve an editor to modify the shared preference
-		SharedPreferences.Editor editor = mySharedPreferences.edit();
-		
-		//store new primitive types in the shared preferences object 
-		//editor.putString("id", id);
-		editor.putString("name", inputName);
-		editor.putString("password", inputPassword);
-		editor.putString("date_of_birth", inputDate);
-		editor.putString("isHelper", isHelper);
-		
-		editor.commit();
-
-    }
 
     private String register(String inputName, String inputPassword, String inputDate, boolean isHelper)
     {
@@ -109,7 +90,6 @@ public class RegisterActivity extends Activity{
         	System.out.println("/register: Entity : " + result.get(1)); //entity
 //    		//save data
         	if (result.get(0).equals("200")) {
-//        		savePreferences(inputName, inputPassword, inputDate, isHelperString);
         		JSONObject reply = new JSONObject(result.get(1));
         		System.out.println("/register: userID is " + reply.getString("id"));
         		return reply.getString("id");

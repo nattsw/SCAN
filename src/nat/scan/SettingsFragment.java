@@ -89,20 +89,9 @@ public class SettingsFragment extends Fragment {
     	boolean isHelper = checkBox.isChecked();
     	String  isHelperString = (isHelper == true) ? "1" : "2";
     	
-//    	HttpClient httpclient = new DefaultHttpClient();   
-//    	HttpPost httppost = new HttpPost(SERVICE_URL); 
-//
-//    	// data to send to server   
-//    	List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
-//    	nameValuePairs.add(new BasicNameValuePair("username", inputName));
-//    	nameValuePairs.add(new BasicNameValuePair("password", inputPassword));
-//    	nameValuePairs.add(new BasicNameValuePair("dob", inputDate));
-//    	nameValuePairs.add(new BasicNameValuePair("isHelper", temp));
     	System.out.println(inputName + " " + inputPassword + " " + isHelperString);
     	
     	try {
-//    		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-//    		httpclient.execute(httppost);
     		
     		Posts update = new Posts();
     		update.execute("/update", inputName, inputPassword, inputDate, isHelperString);
@@ -126,9 +115,18 @@ public class SettingsFragment extends Fragment {
     }
     
     public void logout_button_click() {
-    	SharedPreferences mySharedPreferences = getActivity().getSharedPreferences("scan", 1);
-    	mySharedPreferences.edit().clear();
-    	mySharedPreferences.edit().commit();
+    	//create or retrieve the shared preference object
+		SharedPreferences mySharedPreferences = getActivity().getSharedPreferences("scan", 1);				
+		//Retrieve an editor to modify the shared preference
+		SharedPreferences.Editor editor = mySharedPreferences.edit();	
+		//store new primitive types in the shared preferences object 
+		editor.putString("id", ""); 
+		editor.putString("name", ""); 
+		editor.putString("isHelper", ""); 
+		editor.putString("date_of_birth", "");
+		editor.putString("requested_help", "");
+		editor.putString("responded_help", "");
+		editor.commit();
     	
     	
     	Toast.makeText(getActivity(), "Logged Out.", Toast.LENGTH_SHORT).show();
@@ -145,9 +143,9 @@ public class SettingsFragment extends Fragment {
 		
 		//store new primitive types in the shared preferences object 
 		//editor.putString("id", id);
-		editor.putString("name", inputName);
+//		editor.putString("name", inputName);
 		editor.putString("password", inputPassword);
-		editor.putString("date_of_birth", inputDate);
+//		editor.putString("date_of_birth", inputDate);
 		editor.putString("isHelper", isHelper);
 		
 		editor.commit();
